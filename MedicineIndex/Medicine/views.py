@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login,logout
 from django.contrib import messages
 from .models import Medicine
 from django.contrib.auth.models import User,auth
+from django.db.models import Q
 
 
 def signin(request):
@@ -73,17 +74,41 @@ def addMedicines(request):
         return redirect('viewMedicines')
     return render(request, 'addMedicines.html')
 
+
+def highlight_text(text, keyword):
+    if keyword:
+        keyword = keyword.lower()
+        highlighted_text = ''
+        index  = text.lower().find(keyword)
+        
+        highlighted_text += text[:max(index - 1,0)] 
+        highlighted_text += f'<span class="highlight">{text[index:index + len(keyword)] }</span>' 
+        highlighted_text += text[(index + len(keyword)):]
+        print(index)
+        print(highlighted_text)
+        return highlighted_text
+        
+    return text
+
 def viewMedicines(request):
-    medicines = Medicine.objects.all()
+    queryKeyword = request.GET.get('search', '')
+    if queryKeyword:
+        medicines = Medicine.objects.filter(Q(name__icontains=queryKeyword) | Q(generic_name__icontains=queryKeyword))
+        for medicine in medicines:
+            medicine.name = highlight_text(medicine.name, queryKeyword)
+            medicine.generic_name = highlight_text(medicine.generic_name, queryKeyword)
+
+    else:
+        medicines = Medicine.objects.all()
 
     isAdmin = 'False'
-
     if request.user.is_authenticated:
         isAdmin = 'True'
 
     context = {
         'medicines': medicines,
-        'isAdmin': isAdmin
+        'isAdmin': isAdmin,
+        'queryKeyword': queryKeyword
     }
 
     return render(request, 'viewMedicines.html', context)
