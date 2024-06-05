@@ -91,8 +91,13 @@ def viewMedicines(request):
 
 def medicineDetails(request, pk):
     medicine = Medicine.objects.get(id=pk)
+    isAdmin = 'False'
+
+    if request.user.is_authenticated:
+        isAdmin = 'True'
     context = {
-        'medicine': medicine
+        'medicine': medicine,
+        'isAdmin': isAdmin
     }
     return render(request, 'medicineDetails.html', context)
 
@@ -104,14 +109,49 @@ def index(request):
 def search(request):
     return render(request, 'index.html')
 
-def medicine_detail(request, pk):
-    return render(request, 'index.html')
 
-def medicine_create(request):
-    return render(request, 'index.html')
 
-def medicine_edit(request, pk):
-    return render(request, 'index.html')
+def editMedicine(request, pk):
+    
+    if request.method == 'POST':
+        medicine_name = request.POST.get('medicineName')
+        generic_name = request.POST.get('genericName')
+        manufacturer = request.POST.get('manufacturer')
+        description = request.POST.get('description')
+        price = request.POST.get('price')
+        batch_number = request.POST.get('batch_number')
+        
+        medicine_obj = Medicine.objects.get(id=pk)
+        medicine_obj.name = medicine_name
+        medicine_obj.generic_name = generic_name
+        medicine_obj.manufacturer = manufacturer
+        medicine_obj.description = description
+        medicine_obj.price = price
+        medicine_obj.batch_number = batch_number
+        medicine_obj.save()
+        messages.success(request, 'Medicine updated successfully!')
+        return redirect('medicineDetails', pk=pk)
 
-def medicine_delete(request, pk):
-    return render(request, 'index.html')
+    medicine = Medicine.objects.get(id=pk)
+    isAdmin = 'False'
+
+    if request.user.is_authenticated:
+        isAdmin = 'True'
+    context = {
+        'medicine': medicine,
+        'isAdmin': isAdmin
+    }
+    return render(request, 'editMedicine.html', context)
+    
+
+def deleteMedicine(request, pk):
+
+    # if request.method == 'POST':
+    #     medicine_obj = Medicine.objects.get(id=pk)
+    #     medicine_obj.delete()
+    #     messages.success(request, 'Medicine deleted successfully!')
+    #     return redirect('viewMedicines')
+    print("Delete Medicine")
+    medicine = Medicine.objects.get(id=pk)
+    medicine.delete()
+    return redirect('viewMedicines')
