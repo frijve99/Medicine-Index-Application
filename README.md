@@ -6,11 +6,11 @@ Welcome to the Medicine Index Application! This Django project allows users to m
 Installation
 Before running the project, ensure you have the following installed:
 
-Python
-Django
-MySQL client
-Setup
+1. Python 3.12.0
+2. Django 5.0.6
+3. MySQL client
 
+**Setup**
 
 Clone the project repository:
 
@@ -64,7 +64,14 @@ python manage.py runserver
 - **Public Users**: Public users are granted the ability to peruse and search for medicines, providing an opportunity for exploration and inquiry.
 - **Logged-in Users (Admins)**: Admins hold elevated privileges and are equipped to conduct all CRUD (Create, Read, Update, Delete) operations on medicine records. This includes managing inventory, updating information, and ensuring database integrity.
 
-**Technologies Used**: The Medicine Index Application leverages a suite of advanced technologies, including Django, Python, HTML, CSS, JavaScript, and Bootstrap. These technologies collectively contribute to the application's sophisticated user interface and seamless functionality.
+## Technologies Used
+
+- Django 5.0.6
+- Python 3.12.0
+- HTML
+- CSS
+- JavaScript
+- Bootstrap
 
 Feel free to explore the Medicine Index Application at your convenience. Should you have any inquiries or require further assistance, our team remains at your disposal to provide support and guidance.
 
