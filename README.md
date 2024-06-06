@@ -14,23 +14,21 @@ Setup
 
 Clone the project repository:
 
-
-git clone https://github.com/frijve99/Medicine-Index-Application.git
 ```bash
+git clone https://github.com/frijve99/Medicine-Index-Application.git
+```
 
 
 Navigate to the project directory:
 ```bash
-Copy code
 cd Medicine-Index-Application/medicineIndex
-```bash
+```
 
 Create a MySQL database for the project.
 
 Set up the database configuration in settings.py:
 
 ```python
-Copy code
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -41,23 +39,20 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-```python
+```
 Make migrations and migrate the database:
 ```python
-Copy code
 python manage.py makemigrations
 python manage.py migrate
-```python
+```
 Create a superuser:
 ```python
-Copy code
 python manage.py createsuperuser
-```python
+```
 Run the development server:
 ```python
-Copy code
 python manage.py runserver
-```python
+```
 
 #Features
 
