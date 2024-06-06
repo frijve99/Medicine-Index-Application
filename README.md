@@ -10,9 +10,11 @@ Python
 Django
 MySQL client
 Setup
+
+
 Clone the project repository:
 
-```bash
+
 git clone https://github.com/frijve99/Medicine-Index-Application.git
 ```bash
 
