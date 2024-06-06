@@ -12,9 +12,9 @@
     />
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container">
-        <a class="navbar-brand" href="#">Medicine Index</a>
+        <a class="navbar-brand" href="{% url 'index' %}">Medicine Index</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -33,18 +33,27 @@
                 >View Medicines</a
               >
             </li>
+
+            {% if not request.user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'signin' %}">Login</a>
+              <a class="nav-link" href="{% url 'signin' %}">Login as Admins</a>
             </li>
+            {% else %} {% if request.user.is_superuser %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'viewAdmins' %}">Register</a>
+              <a class="nav-link" href="{% url 'viewAdmins' %}">View Admins</a>
             </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+            {% endif %}
           </ul>
           <!-- Search Form -->
-          <form class="d-flex">
+          <form class="d-flex" method="GET" action="{% url 'viewMedicines' %}">
             <input
               class="form-control me-2"
               type="search"
+              name="search"
               placeholder="Search for medicines..."
               aria-label="Search"
             />
@@ -127,9 +136,11 @@
           name="batch_number" value="{{medicine.batch_number}}" " />
         </div>
         <button type="submit" class="btn btn-primary">Update Medicine</button>
+        <a href="{% url 'viewMedicines'%}" class="btn btn-sm btn-secondary"
+          >Back to Lists</a
+        >
       </form>
     </div>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   </body>

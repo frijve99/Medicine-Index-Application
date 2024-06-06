@@ -14,7 +14,7 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container">
-        <a class="navbar-brand" href="#">Medicine Index</a>
+        <a class="navbar-brand" href="{% url 'index' %}">Medicine Index</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -29,22 +29,30 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'createAdmin' %}"
+              <a class="nav-link" href="{% url 'viewMedicines' %}"
                 >View Medicines</a
               >
             </li>
+            {% if not request.user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'signin' %}">Login</a>
+              <a class="nav-link" href="{% url 'signin' %}">Login as Admins</a>
             </li>
+            {% else %} {% if request.user.is_superuser %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'viewAdmins' %}">Register</a>
+              <a class="nav-link" href="{% url 'viewAdmins' %}">View Admins</a>
             </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+            {% endif %}
           </ul>
           <!-- Search Form -->
-          <form class="d-flex">
+          <form class="d-flex" method="GET" action="{% url 'viewMedicines' %}">
             <input
               class="form-control me-2"
               type="search"
+              name="search"
               placeholder="Search for medicines..."
               aria-label="Search"
             />

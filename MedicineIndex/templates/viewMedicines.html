@@ -19,7 +19,7 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container">
-        <a class="navbar-brand" href="#">Medicine Index</a>
+        <a class="navbar-brand" href="{% url 'index' %}">Medicine Index</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -34,16 +34,23 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'createAdmin' %}"
+              <a class="nav-link" href="{% url 'viewMedicines' %}"
                 >View Medicines</a
               >
             </li>
+            {% if not request.user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'signin' %}">Login</a>
+              <a class="nav-link" href="{% url 'signin' %}">Login as Admins</a>
             </li>
+            {% else %} {% if request.user.is_superuser %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'viewAdmins' %}">Register</a>
+              <a class="nav-link" href="{% url 'viewAdmins' %}">View Admins</a>
             </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+            {% endif %}
           </ul>
         </div>
       </div>
@@ -103,8 +110,10 @@
                             <td>${{medicine.price}}</td>
                             <td>
                                 <a href="{% url 'medicineDetails' medicine.id %}" class="btn btn-sm btn-primary">View Details</a>
+                                {% if request.user.is_authenticated %} 
                                 <a href="{% url 'editMedicine' medicine.id %}" class="btn btn-sm btn-warning">Update</a>
                                 <a href="{% url 'deleteMedicine' medicine.id %}"  class="btn btn-sm btn-danger" onclick="return confirmDelete()">Delete</a>
+                                {% endif %}
                                 
                             </td>
                         {% endfor %}
@@ -114,9 +123,11 @@
             </div>
         </div>
         <div class="row mt-3">
+        {% if request.user.is_authenticated %} 
         <div class="col-md-12 ">
             <a href="{% url 'addMedicines' %}" class="btn btn-success">Add Medicine</a>
         </div>
+        {% endif %}
     </div>
     </div>
 </div>

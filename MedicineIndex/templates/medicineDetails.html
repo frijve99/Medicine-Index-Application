@@ -36,7 +36,7 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container">
-        <a class="navbar-brand" href="#">Medicine Index</a>
+        <a class="navbar-brand" href="{% url 'index' %}">Medicine Index</a>
         <button
           class="navbar-toggler"
           type="button"
@@ -55,13 +55,19 @@
                 >View Medicines</a
               >
             </li>
+            {% if not request.user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'signin' %}">Login</a>
+              <a class="nav-link" href="{% url 'signin' %}">Login as Admins</a>
             </li>
+            {% else %} {% if request.user.is_superuser %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'viewAdmins' %}">Register</a>
+              <a class="nav-link" href="{% url 'viewAdmins' %}">View Admins</a>
             </li>
-          </ul>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+            {% endif %}
           <!-- Search Form -->
           <form class="d-flex">
             <input
@@ -100,6 +106,9 @@
             <p><strong>Price:</strong> {{medicine.price}} BDT</p>
           </div>
         </div>
+        <a href="{% url 'viewMedicines'%}" class="btn btn-sm btn-secondary"
+          >Back to Lists</a
+        >
       </div>
     </div>
 

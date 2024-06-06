@@ -22,39 +22,50 @@ def signin(request):
             return redirect('signin')
     else:
         return render(request, 'signin.html')
-
+@login_required
 def createAdmin(request):
-    if request.method=='POST':
-        username = request.POST['username']
-        email = request.POST['email']
-        password = request.POST['password']
-        password2 = request.POST['password2']
-        # print("ELLO")
+    if request.user.is_superuser:
+        if request.method=='POST':
+            username = request.POST['username']
+            email = request.POST['email']
+            password = request.POST['password']
+            password2 = request.POST['password2']
         
-        if password == password2:
-            if User.objects.filter(email=email).exists():
-                user= User.objects.filter(email=email).first()
-                user_profile = User.objects.filter(email=email).first()
-                messages.info(request, 'Email Taken')
-                return redirect('createAdmin')
+            if password == password2:
+                if User.objects.filter(email=email).exists():
+                    user= User.objects.filter(email=email).first()
+                    user_profile = User.objects.filter(email=email).first()
+                    messages.info(request, 'Email Taken')
+                    return redirect('createAdmin')
             
-            elif User.objects.filter(username=username).exists():
-                messages.info(request, 'Username Taken')
-                return redirect('createAdmin')
+                elif User.objects.filter(username=username).exists():
+                    messages.info(request, 'Username Taken')
+                    return redirect('createAdmin')
+                else:
+                    user = User.objects.create_user(username=username,password=password, email=email)
+                    user.save()
+                    messages.info(request,'An Admin has been Created...')               
+                    return redirect('viewAdmins')
             else:
-                user = User.objects.create_user(username=username,password=password, email=email)
-                user.save()
-                messages.info(request,'An Admin has been Created...')               
+                messages.info(request, 'Password dont match')
                 return redirect('createAdmin')
-        else:
-            messages.info(request, 'Password dont match')
-            return redirect('createAdmin')
-    else:
         return render(request,'createAdmin.html')
+    else:
+        messages.info(request, 'You are not authorized to view this page!')
+        return redirect('viewMedicines')
 
+@login_required
 def viewAdmins(request):
-    return render(request, 'viewAdmins.html')
-
+    if request.user.is_superuser:
+        users = User.objects.exclude(is_superuser=True)
+        context = {
+            'users': users
+        }
+        return render(request, 'viewAdmins.html', context)
+    messages.info(request, 'You are not authorized to view this page!')
+    return redirect('viewMedicines')
+    
+@login_required
 def addMedicines(request):
     if request.method == 'POST':
         # Retrieve the data from the request
@@ -72,7 +83,14 @@ def addMedicines(request):
         medicine_obj.save()
         messages.success(request, 'Medicine added successfully!')
         return redirect('viewMedicines')
-    return render(request, 'addMedicines.html')
+    isAdmin = 'False'
+    #check if super use
+    if request.user.is_authenticated:
+        isAdmin = 'True'
+    context = {
+        'isAdmin': isAdmin
+    }
+    return render(request, 'addMedicines.html', context)
 
 
 def highlight_text(text, keyword):
@@ -126,7 +144,6 @@ def medicineDetails(request, pk):
     }
     return render(request, 'medicineDetails.html', context)
 
-@login_required
 def index(request):
     medicines = Medicine.objects.all()
     return render(request, 'index.html')
@@ -135,7 +152,7 @@ def search(request):
     return render(request, 'index.html')
 
 
-
+@login_required
 def editMedicine(request, pk):
     
     if request.method == 'POST':
@@ -168,7 +185,7 @@ def editMedicine(request, pk):
     }
     return render(request, 'editMedicine.html', context)
     
-
+@login_required
 def deleteMedicine(request, pk):
 
     # if request.method == 'POST':
@@ -180,3 +197,32 @@ def deleteMedicine(request, pk):
     medicine = Medicine.objects.get(id=pk)
     medicine.delete()
     return redirect('viewMedicines')
+@login_required
+def logout(request):
+    auth.logout(request)
+    return redirect('index')
+
+@login_required
+def deleteAdmin(request, pk):
+    user = User.objects.get(username=pk)
+    user.delete()
+    return redirect('viewAdmins')
+@login_required
+def editAdmin(request, pk):
+    if request.method == 'POST':
+        newEmail = request.POST.get('email')
+
+        if User.objects.filter(email=newEmail).exists():
+                messages.info(request, 'Email Taken')
+                return redirect('editAdmin')
+        
+        user = User.objects.get(username=pk)
+        user.email = newEmail
+        user.save()
+        messages.success(request, 'Admin updated successfully!')
+        return redirect('viewAdmins')
+    user = User.objects.get(username=pk)
+    context = {
+        'user': user
+    }
+    return render(request, 'editAdmin.html', context)

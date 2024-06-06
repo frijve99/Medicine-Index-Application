@@ -14,6 +14,8 @@ urlpatterns = [
     path('medicine/logout' , views.logout , name='logout'),
     path('medicine/viewAdmins' , views.viewAdmins , name='viewAdmins'),
     path('medicine/viewMedicines' , views.viewMedicines , name='viewMedicines'),
-    path('medicine/addMedicines' , views.addMedicines , name='addMedicines')
+    path('medicine/addMedicines' , views.addMedicines , name='addMedicines'),
+    path('medicine/<str:pk>/deleteAdmin' , views.deleteAdmin , name='deleteAdmin'),
+    path('medicine/<str:pk>/editAdmin' , views.editAdmin , name='editAdmin'),
     
 ]
